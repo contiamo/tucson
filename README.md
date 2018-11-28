@@ -1,25 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-- [tuscon](#tuscon)
-  - [Getting started](#getting-started)
-  - [Motivation](#motivation)
-  - [API guide](#api-guide)
-    - [Primitive decoders](#primitive-decoders)
-    - [Combining decoders](#combining-decoders)
-      - [optional](#optional)
-      - [object](#object)
-      - [dictionary](#dictionary)
-      - [array](#array)
-    - [Transforming decoders](#transforming-decoders)
-      - [map](#map)
-      - [flatMap](#flatmap)
-    - [Custom decoders](#custom-decoders)
-  - [Alternatives](#alternatives)
-  - [Contributing](#contributing)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # tuscon
 
 Type-safe runtime schema validator that won't leave you in the desert.
