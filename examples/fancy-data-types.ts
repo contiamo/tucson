@@ -1,15 +1,15 @@
-import * as tuscon from "../";
+import * as tucson from "../";
 
 export type Department = "Sales" | "Engineering";
 
-const departmentDecoder: tuscon.Decoder<Department> = tuscon.flatMap(tuscon.string, stringValue => {
+const departmentDecoder: tucson.Decoder<Department> = tucson.flatMap(tucson.string, stringValue => {
   switch (stringValue) {
     case "Sales":
-      return tuscon.succeed("Sales" as Department);
+      return tucson.succeed("Sales" as Department);
     case "Engineering":
-      return tuscon.succeed("Engineering" as Department);
+      return tucson.succeed("Engineering" as Department);
     default:
-      return tuscon.fail("not a valid job");
+      return tucson.fail("not a valid job");
   }
 });
 
@@ -18,9 +18,9 @@ export interface Tree {
   children: Tree[];
 }
 
-const treeDecoder: tuscon.Decoder<Tree> = tuscon.object({
-  name: tuscon.string,
-  children: tuscon.array(tuscon.lazy(() => treeDecoder)),
+const treeDecoder: tucson.Decoder<Tree> = tucson.object({
+  name: tucson.string,
+  children: tucson.array(tucson.lazy(() => treeDecoder)),
 });
 
 export interface Person {
@@ -33,13 +33,13 @@ export interface Person {
   };
 }
 
-const personDecoder: tuscon.Decoder<Person> = tuscon.object({
-  name: tuscon.string,
-  age: tuscon.oneOf([tuscon.number, tuscon.map(tuscon.string, Number)]),
+const personDecoder: tucson.Decoder<Person> = tucson.object({
+  name: tucson.string,
+  age: tucson.oneOf([tucson.number, tucson.map(tucson.string, Number)]),
   department: departmentDecoder,
-  contact: tuscon.object({
-    email: tuscon.string,
-    phone: tuscon.string,
+  contact: tucson.object({
+    email: tucson.string,
+    phone: tucson.string,
   }),
   tree: treeDecoder,
 });

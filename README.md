@@ -1,26 +1,26 @@
-# tuscon
+# tucson
 
 Type-safe runtime schema validator that won't leave you in the desert.
 
 ## Getting started
 
-Simply install as `npm install tuscon` and start validating like so:
+Simply install as `npm install tucson` and start validating like so:
 
 ```ts
-import * as tuscon from "tuscon";
+import * as tucson from "tucson";
 
 interface Person {
   name: string;
   age: number;
 }
 
-tuscon.object({
-  name: tuscon.string,
-  age: tuscon.number,
+tucson.object({
+  name: tucson.string,
+  age: tucson.number,
 })({ name: "Paul", age: "thirty-five" }); // logs { type: "error", value: "expected field 'age' to decode correctly, received: \"thirty-five\"" }
 ```
 
-Anything you create/combine with `tuscon` will become a function that you can call on your data, returning a result object indicating success or a specific error you can reconcile with your server.
+Anything you create/combine with `tucson` will become a function that you can call on your data, returning a result object indicating success or a specific error you can reconcile with your server.
 
 ## Motivation
 
@@ -32,11 +32,11 @@ The API is inspired by [Elm's json decoders](https://package.elm-lang.org/packag
 
 ### Primitive decoders
 
-Primitive decoders decode primitive types that translate into primitive types in TypeScript. `tuscon.string(2)` returns an error because it was given a number, whereas `tuscon.boolean(true)` and `tuscon.number(5)` will come back with a success. You get the deal.
+Primitive decoders decode primitive types that translate into primitive types in TypeScript. `tucson.string(2)` returns an error because it was given a number, whereas `tucson.boolean(true)` and `tucson.number(5)` will come back with a success. You get the deal.
 
 ### Combining decoders
 
-Non-primitive types are built up from primitive ones using helpers like `tuscon.object` in the example above. The combine methods are as follows:
+Non-primitive types are built up from primitive ones using helpers like `tucson.object` in the example above. The combine methods are as follows:
 
 #### optional
 
@@ -54,14 +54,14 @@ Any realistic application will run into the following needs:
 - decoding algebraic data types
 - performing fine-grained validation such as integers only or last names present
 
-This is where `tuscon` gets very unopinionated and mathemtical, allowing you to do all this in pretty much two methods:
+This is where `tucson` gets very unopinionated and mathemtical, allowing you to do all this in pretty much two methods:
 
 #### map
 
 `map` simply transforms a successful decode result, while obviously leaving unsuccessful ones alone with their original error message.
 
 ```ts
-tuscon.map(tuscon.string, Number)("2"); // { type: "success", value: 2 }
+tucson.map(tucson.string, Number)("2"); // { type: "success", value: 2 }
 ```
 
 Any transformation can be made at this point, maintaining type-safety through function signatures.
@@ -73,11 +73,11 @@ The limitation of `map` is that if the original decoder succeeds, the mapped one
 When using `flatMap`, the mapping function doesn't return a value, but instead a decoder, which is 'flattened' under the hood to get a final value:
 
 ```ts
-const attendeesDecoder = tuscon.flatMap(tuscon.number, count => {
+const attendeesDecoder = tucson.flatMap(tucson.number, count => {
   if (count === Math.floor(count)) {
-    return tuscon.succeed(count);
+    return tucson.succeed(count);
   }
-  return tuscon.fail("expected an integer");
+  return tucson.fail("expected an integer");
 });
 ```
 
@@ -85,13 +85,13 @@ const attendeesDecoder = tuscon.flatMap(tuscon.number, count => {
 
 ### Custom decoders
 
-Why did we call them decoders? They're basically a function that takes an `any` and returns `{ type: "success", value: T } | { type: "error", value: "should be pleasing to the eye" }`, so you can quickly come up with domain-specific decoders and not be tied up with an opinionated library. `tuscon` takes care of composition so you can easily set up the building blocks that are right for you.
+Why did we call them decoders? They're basically a function that takes an `any` and returns `{ type: "success", value: T } | { type: "error", value: "should be pleasing to the eye" }`, so you can quickly come up with domain-specific decoders and not be tied up with an opinionated library. `tucson` takes care of composition so you can easily set up the building blocks that are right for you.
 
-With custom decoders, however, you are responsible that they don't thrown runtime errors, a guarantee that `tuscon`'s primitives will keep for you.
+With custom decoders, however, you are responsible that they don't thrown runtime errors, a guarantee that `tucson`'s primitives will keep for you.
 
 ## Alternatives
 
-Have a look at the following projects that can be suitable alternatives to `tuscon` depending on your needs:
+Have a look at the following projects that can be suitable alternatives to `tucson` depending on your needs:
 
 - `yup`
 - `joi`
@@ -104,4 +104,4 @@ Feel free to just open an issue and start a discussion. This will be more formal
 
 ---
 
-`tuscon` is born and raised at `Contiamo` in Berlin. Our Arizona ties are scarce
+`tucson` is born and raised at `Contiamo` in Berlin. Our Arizona ties are scarce
