@@ -1,5 +1,5 @@
 {
-  "name": "tucson",
+  "name": "tucson-decode",
   "version": "0.0.1",
   "description": "Runtime validator that will not leave you in the desert",
   "main": "lib/index.js",
