@@ -7,7 +7,7 @@ Type-safe runtime schema validator that won't leave you in the desert.
 Simply install as `npm install tucson` and start validating like so:
 
 ```ts
-import * as tucson from "tucson";
+import * as tucson from "tucson-decode";
 
 interface Person {
   name: string;
