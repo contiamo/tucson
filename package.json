@@ -10,7 +10,8 @@
   "scripts": {
     "test": "jest",
     "build": "rm -rf lib && mkdir lib && tsc",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "prettier": "prettier 'src/**/*.ts' --write"
   },
   "author": "Peter Szerzo <peter@contiamo.com>",
   "license": "ISC",

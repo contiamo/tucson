@@ -34,7 +34,10 @@ describe("array", () => {
   });
 
   test("fails to decode array with a single bad entry", () => {
-    expect(tucson.array(tucson.string)(["a", 0, "c"])).toEqual({ type: "error", value: "expected array item at index 1 to decode correctly, received: 0" });
+    expect(tucson.array(tucson.string)(["a", 0, "c"])).toEqual({
+      type: "error",
+      value: "expected array item at index 1 to decode correctly, received: 0",
+    });
   });
 
   test("fails to decode a falsy value without runtime errors", () => {

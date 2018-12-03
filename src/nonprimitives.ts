@@ -83,19 +83,21 @@ const decodeArrayRecursive = <T>(decoder: Decoder<T>, values: any[], successValu
   if (values.length === 0) {
     return {
       type: "success",
-      value: successValues
-    }
+      value: successValues,
+    };
   }
-  const [head, ...tail] = values
-  const decodedHead = decoder(head)
+  const [head, ...tail] = values;
+  const decodedHead = decoder(head);
   if (decodedHead.type === "error") {
     return {
       type: "error",
-      value: `expected array item at index ${successValues.length} to decode correctly, received: ${JSON.stringify(head)}`
-    }
+      value: `expected array item at index ${successValues.length} to decode correctly, received: ${JSON.stringify(
+        head,
+      )}`,
+    };
   }
-  return decodeArrayRecursive(decoder, tail, [ ...successValues, decodedHead.value ])
-}
+  return decodeArrayRecursive(decoder, tail, [...successValues, decodedHead.value]);
+};
 
 /**
  * Decode an array based on the decoder of its elements.
@@ -108,6 +110,6 @@ export const array = <T>(decoder: Decoder<T>): Decoder<T[]> => {
         value: `expected array, received: ${JSON.stringify(values)}`,
       };
     }
-    return decodeArrayRecursive(decoder, values, [])
+    return decodeArrayRecursive(decoder, values, []);
   };
 };
