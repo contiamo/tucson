@@ -16,7 +16,7 @@ describe("object", () => {
         name: tucson.string,
         age: tucson.number,
       })({ name: "Paul" }),
-    ).toEqual({ type: "error", value: "expected field 'age' to decode correctly, received: undefined" });
+    ).toEqual({ type: "error", value: "error decoding field 'age': expected a number, received: undefined" });
   });
 
   test("fails to decode falsy values without runtime errors", () => {
