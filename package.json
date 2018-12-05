@@ -11,14 +11,14 @@
     "test": "jest",
     "build": "rm -rf lib && mkdir lib && tsc",
     "prepublish": "npm run build",
-    "prettier": "prettier 'src/**/*.ts' --write"
+    "prettier": "prettier '{src,examples}/**/*.ts' --write"
   },
   "author": "Peter Szerzo <peter@contiamo.com>",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^23.3.9",
     "jest": "^23.6.0",
-    "prettier": "^1.15.2",
+    "prettier": "^1.15.3",
     "ts-jest": "^23.10.5",
     "typescript": "^3.1.6"
   },

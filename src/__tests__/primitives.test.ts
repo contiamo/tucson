@@ -19,3 +19,33 @@ describe("number", () => {
     expect(tucson.number("0")).toEqual({ type: "error", value: `expected a number, received: "0"` });
   });
 });
+
+describe("boolean", () => {
+  test("successful boolean", () => {
+    expect(tucson.boolean(false)).toEqual({ type: "success", value: false });
+  });
+
+  test("unsuccessful boolean", () => {
+    expect(tucson.boolean(70)).toEqual({ type: "error", value: `expected a boolean, received: 70` });
+  });
+});
+
+describe("null", () => {
+  test("successful null", () => {
+    expect(tucson.null(null)).toEqual(tucson.success(null));
+  });
+
+  test("unsuccessful null", () => {
+    expect(tucson.null("Sales")).toEqual(tucson.error(`expected null, received: "Sales"`));
+  });
+});
+
+describe("literal", () => {
+  test("successful literal", () => {
+    expect(tucson.literal("Sales")("Sales")).toEqual(tucson.success("Sales"));
+  });
+
+  test("unsuccessful literal", () => {
+    expect(tucson.literal("Sales")("Foo")).toEqual(tucson.error(`expected literal "Sales", received: "Foo"`));
+  });
+});
