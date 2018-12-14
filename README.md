@@ -40,11 +40,39 @@ Non-primitive types are built up from primitive ones using helpers like `tucson.
 
 #### optional
 
+Any decoder can be made optional so it succeeds with `undefined` if the value isn't there.
+
 #### object
+
+A decoder for a statically defined object structure can be simply built up from an object of the same shape, just with equivalent decoders as field values:
+
+```ts
+interface Person {
+  name: string
+  age: number
+}
+
+const personDecoder: tucson.Decoder<Person> = tucson.object({
+  name: tucson.string,
+  age: tucson.number
+})
+```
+
+This is completely type-safe, courtesy of the TypeScript compiler.
 
 #### dictionary
 
+Dictionaries are the dynamic cousins of objects so they can have any number of keys with the restriction that values are of the same type. They correspond most closely to maps in JavaScript and the `Record` type in TypeScript. We are refraining from those names to avoid confusion on minor nuances.
+
+You can define a dictionary decoder by simply passing it the decoder of the value:
+
+```ts
+tucson.dictionary(tucson.string)({ one: "two", three: "four" }) // success
+```
+
 #### array
+
+By calling `tucson.array(someDecoder as tucson.Decoder<Some>)` an array of a `Some`'s is decoded.
 
 ### Transforming decoders
 
@@ -91,12 +119,13 @@ With custom decoders, however, you are responsible that they don't thrown runtim
 
 ## Alternatives
 
-Have a look at the following projects that can be suitable alternatives to `tucson` depending on your needs:
+`tucson` is inspired by and an alternative to the following projects:
 
-- `yup`
-- `joi`
-- `ajv`
-- `elm/json`
+* [elm/json](https://package.elm-lang.org/packages/elm/json/latest/Json-Decode)
+* [json-type-validation](https://github.com/mojotech/json-type-validation)
+* [yup](https://github.com/jquense/yup)
+* [joi](https://github.com/hapijs/joi)
+* [ajv](https://github.com/epoberezkin/ajv)
 
 ## Contributing
 
