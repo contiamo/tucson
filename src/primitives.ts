@@ -54,3 +54,10 @@ export const boolean: Decoder<boolean> = val =>
  */
 export const nullDecoder: Decoder<null> = val =>
   val === null ? success(val) : error(`expected null, received: ${JSON.stringify(val)}`);
+
+/**
+ * Decode an undefined value. This is named `undefinedDecoder` instead of `null` to not override the global value.
+ * Recommended usage outside the library would be `tucson.undefined`.
+ */
+export const undefinedDecoder: Decoder<undefined> = val =>
+  typeof val === "undefined" ? success(val) : error(`expected undefined, received: ${JSON.stringify(val)}`);

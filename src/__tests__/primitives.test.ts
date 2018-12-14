@@ -40,6 +40,16 @@ describe("null", () => {
   });
 });
 
+describe("undefined", () => {
+  test("successful undefined", () => {
+    expect(tucson.undefined(undefined)).toEqual(tucson.success(undefined));
+  });
+
+  test("unsuccessful undefined", () => {
+    expect(tucson.undefined("Sales")).toEqual(tucson.error(`expected undefined, received: "Sales"`));
+  });
+});
+
 describe("literal", () => {
   test("successful literal", () => {
     expect(tucson.literal("Sales")("Sales")).toEqual(tucson.success("Sales"));
