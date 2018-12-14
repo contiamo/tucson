@@ -1,4 +1,4 @@
-import { Decoder, error } from "./types";
+import { Decoder, error, success } from "./types";
 
 /**
  * Make a decoder optional, succeeding immediately with `undefined` if the value
@@ -15,19 +15,20 @@ export const optional = <T>(decoder: Decoder<T>): Decoder<T | undefined> => val 
  * Try multiple decoders, returning the output of the first one that succeeds.
  * If none of them succeed, an error is returned.
  */
-export const oneOf = <T>(...decoders: Array<Decoder<T>>): Decoder<T> => {
-  return val => {
-    for (const decoder of decoders) {
-      const decoded = decoder(val);
-      if (decoded.type === "success") {
-        return decoded;
-      }
+export const oneOf = <T>(...decoders: Array<Decoder<T>>): Decoder<T> => val => {
+  for (const decoder of decoders) {
+    const decoded = decoder(val);
+    if (decoded.type === "success") {
+      return decoded;
     }
-    return {
-      type: "error",
-      value: "No decoder matched the validated field",
-    };
-  };
+  }
+  return error([
+    {
+      path: [],
+      error: "expected at least one of the provided decoders to succeed",
+      received: val,
+    },
+  ]);
 };
 
 /**
@@ -49,10 +50,7 @@ export const map = <T1, T2>(decoder1: Decoder<T1>, fn: (t1: T1) => T2): Decoder<
   return val => {
     const decoded1 = decoder1(val);
     if (decoded1.type === "success") {
-      return {
-        type: "success",
-        value: fn(decoded1.value),
-      };
+      return success(fn(decoded1.value));
     }
     return decoded1;
   };
@@ -76,7 +74,14 @@ export const ensure = <T>(decoder: Decoder<T>, ...checks: [(t: T) => boolean, st
   const result = decoder(val);
   if (result.type === "success") {
     for (const [predicate, errorMsg] of checks) {
-      if (!predicate(result.value)) return error(errorMsg);
+      if (!predicate(result.value))
+        return error([
+          {
+            path: [],
+            received: val,
+            error: errorMsg,
+          },
+        ]);
     }
   }
   return result;

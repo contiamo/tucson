@@ -1,9 +1,9 @@
-export type Result<T> = { type: "error"; value: string } | { type: "success"; value: T };
+export type Result<E, T> = { type: "error"; value: E } | { type: "success"; value: T };
 
 /**
  * Successful result constructor
  */
-export const success = <T>(value: T): Result<T> => ({
+export const success = <E, T>(value: T): Result<E, T> => ({
   type: "success",
   value,
 });
@@ -11,9 +11,18 @@ export const success = <T>(value: T): Result<T> => ({
 /**
  * Error result constructor
  */
-export const error = <T>(value: string): Result<T> => ({
+export const error = <E, T>(value: E): Result<E, T> => ({
   type: "error",
   value,
 });
 
-export type Decoder<T> = (a: any) => Result<T>;
+/**
+ * Decoder error
+ */
+export interface DecodeError {
+  path: string[];
+  received: any;
+  error: string;
+}
+
+export type Decoder<T> = (a: any) => Result<DecodeError[], T>;

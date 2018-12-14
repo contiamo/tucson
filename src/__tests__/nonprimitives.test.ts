@@ -16,7 +16,16 @@ describe("object", () => {
         name: tucson.string,
         age: tucson.number,
       })({ name: "Paul" }),
-    ).toEqual({ type: "error", value: "error decoding field 'age': expected a number, received: undefined" });
+    ).toEqual({
+      type: "error",
+      value: [
+        {
+          path: ["age"],
+          error: "expected number",
+          received: undefined,
+        },
+      ],
+    });
   });
 
   test("fails to decode falsy values without runtime errors", () => {
@@ -24,7 +33,16 @@ describe("object", () => {
       tucson.object({
         name: tucson.string,
       })(null),
-    ).toEqual({ type: "error", value: "" });
+    ).toEqual({
+      type: "error",
+      value: [
+        {
+          path: [],
+          error: "expected object",
+          received: null,
+        },
+      ],
+    });
   });
 });
 
@@ -36,11 +54,26 @@ describe("array", () => {
   test("fails to decode array with a single bad entry", () => {
     expect(tucson.array(tucson.string)(["a", 0, "c"])).toEqual({
       type: "error",
-      value: "expected array item at index 1 to decode correctly, received: 0",
+      value: [
+        {
+          path: ["1"],
+          error: "expected string",
+          received: 0,
+        },
+      ],
     });
   });
 
   test("fails to decode a falsy value without runtime errors", () => {
-    expect(tucson.array(tucson.string)(null)).toEqual({ type: "error", value: "expected array, received: null" });
+    expect(tucson.array(tucson.string)(null)).toEqual({
+      type: "error",
+      value: [
+        {
+          path: [],
+          error: "expected array",
+          received: null,
+        },
+      ],
+    });
   });
 });
