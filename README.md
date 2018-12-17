@@ -117,6 +117,26 @@ Why did we call them decoders? They're basically a function that takes an `any` 
 
 With custom decoders, however, you are responsible that they don't thrown runtime errors, a guarantee that `tucson`'s primitives will keep for you.
 
+### Errors
+
+When decoders fail, they provide to-the-point error messages that help pin down errors easily. They can be referenced instantly to open up a discussion around frontend-backend contracts and find bugs in both places.
+
+A typical error message looks like this:
+
+```
+{
+  type: "error",
+  value: [
+    // There can be multiple error messages
+    {
+      path: [ "address", "street" ],
+      error: "expected string",
+      received: 2
+    }
+  ]
+}
+```
+
 ## Alternatives
 
 `tucson` is inspired by and an alternative to the following projects:

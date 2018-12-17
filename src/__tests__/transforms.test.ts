@@ -7,7 +7,16 @@ describe("map", () => {
   });
 
   test("keeps an unsuccessful decode intact", () => {
-    expect(tucson.map(tucson.string, Number)(0)).toEqual({ type: "error", value: "expected a string, received: 0" });
+    expect(tucson.map(tucson.string, Number)(0)).toEqual({
+      type: "error",
+      value: [
+        {
+          path: [],
+          error: "expected string",
+          received: 0,
+        },
+      ],
+    });
   });
 });
 
@@ -26,7 +35,13 @@ describe("flatMap", () => {
   test("keeps an unsuccessful decode intact", () => {
     expect(tucson.flatMap(tucson.string, () => tucson.succeed("default"))(0)).toEqual({
       type: "error",
-      value: "expected a string, received: 0",
+      value: [
+        {
+          path: [],
+          error: "expected string",
+          received: 0,
+        },
+      ],
     });
   });
 });
@@ -39,8 +54,28 @@ describe("ensure", () => {
       [p => p.age > p.name.length, "unexpected age"],
     );
 
-    expect(personDecoder({ name: "Foo", age: 32 })).toEqual(error("name is too far from perfect"));
-    expect(personDecoder({ name: "IevgenFoo", age: 5 })).toEqual(error("unexpected age"));
+    expect(personDecoder({ name: "Foo", age: 32 })).toEqual({
+      type: "error",
+      value: [
+        {
+          path: [],
+          received: { name: "Foo", age: 32 },
+          error: "name is too far from perfect",
+        },
+      ],
+    });
+    expect(personDecoder({ name: "IevgenFoo", age: 5 })).toEqual(
+      error([
+        {
+          path: [],
+          received: {
+            name: "IevgenFoo",
+            age: 5,
+          },
+          error: "unexpected age",
+        },
+      ]),
+    );
     expect(personDecoder({ name: "IevgenFoo", age: 33 })).toEqual(success({ name: "IevgenFoo", age: 33 }));
   });
 
@@ -51,9 +86,24 @@ describe("ensure", () => {
     });
 
     expect(personDecoder({ name: "Foo", age: 32 })).toEqual(
-      error("error decoding field 'name': name is too far from perfect"),
+      error([
+        {
+          path: ["name"],
+          received: "Foo",
+          error: "name is too far from perfect",
+        },
+      ]),
     );
-    expect(personDecoder({ name: "IevgenFoo", age: -15 })).toEqual(error("error decoding field 'age': negative age"));
+    expect(personDecoder({ name: "IevgenFoo", age: -15 })).toEqual({
+      type: "error",
+      value: [
+        {
+          path: ["age"],
+          error: "negative age",
+          received: -15,
+        },
+      ],
+    });
     expect(personDecoder({ name: "IevgenFoo", age: 33 })).toEqual(success({ name: "IevgenFoo", age: 33 }));
   });
 });

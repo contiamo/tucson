@@ -1,17 +1,14 @@
-import { Decoder, Result, error } from "./types";
-
-/**
- * Decode a field inside an object.
- */
-export const field = <T>(key: string, decoder: Decoder<T>): Decoder<T> => val =>
-  val ? decoder(val[key]) : error("Value doesn't exist");
+import { Decoder, DecodeError, Result, error, success } from "./types";
 
 export const dictionary = <T>(decoder: Decoder<T>): Decoder<{ [key: string]: T }> => val => {
   if (!val || typeof val !== "object") {
-    return {
-      type: "error",
-      value: "not an object",
-    };
+    return error([
+      {
+        path: [],
+        error: "expected dictionary",
+        received: val,
+      },
+    ]);
   }
   const res: { [key: string]: T } = {};
   // @todo use Object.keys and recursive helper like in `decodeArrayRecursive` below
@@ -21,11 +18,18 @@ export const dictionary = <T>(decoder: Decoder<T>): Decoder<{ [key: string]: T }
       if (decoded.type === "success") {
         res[key] = decoded.value as T;
       } else {
-        return {
-          type: "error",
-          //@todo: add value
-          value: "",
-        };
+        /**
+         * @todo instead of exiting early, decode all members of the object in order to provide
+         * all errors upfront. This is possible since the error is an array, and is crucial
+         * for effective debugging in case the error occurred in production.
+         */
+        return error(
+          decoded.value.map(decodeError => ({
+            path: [key, ...decodeError.path],
+            received: decodeError.received,
+            error: decodeError.error,
+          })),
+        );
       }
     }
   }
@@ -42,10 +46,13 @@ export const dictionary = <T>(decoder: Decoder<T>): Decoder<{ [key: string]: T }
 export const object = <T>(objectFields: { [objectField in keyof T]: Decoder<T[objectField]> }): Decoder<T> => {
   return val => {
     if (!val) {
-      return {
-        type: "error",
-        value: "",
-      };
+      return error([
+        {
+          path: [],
+          error: "expected object",
+          received: val,
+        },
+      ]);
     }
     const res: { [objectField in keyof T]?: T[objectField] } = {};
     // @todo use Object.keys and recursive helper like in `decodeArrayRecursive` below
@@ -55,10 +62,13 @@ export const object = <T>(objectFields: { [objectField in keyof T]: Decoder<T[ob
       if (decoded.type === "success") {
         res[key] = decoded.value;
       } else {
-        return {
-          type: "error",
-          value: `error decoding field '${key}': ${decoded.value}`,
-        };
+        return error(
+          decoded.value.map(decodeError => ({
+            path: [key, ...decodeError.path],
+            error: decodeError.error,
+            received: decodeError.received,
+          })),
+        );
       }
     }
     return {
@@ -68,19 +78,29 @@ export const object = <T>(objectFields: { [objectField in keyof T]: Decoder<T[ob
   };
 };
 
-// Recursive helper to decode an array declaratively and exit early
-const decodeArrayRecursive = <T>(decoder: Decoder<T>, values: any[], successValues: T[]): Result<T[]> => {
+/**
+ * Recursive helper to decode an array declaratively and exit early
+ * @todo instead of exiting early, decode all members of the array in order to provide
+ * all errors upfront. This is possible since the error is an array, and is crucial
+ * for effective debugging in case the error occurred in production.
+ */
+const decodeArrayRecursive = <T>(
+  decoder: Decoder<T>,
+  values: any[],
+  successValues: T[],
+): Result<DecodeError[], T[]> => {
   if (values.length === 0) {
-    return {
-      type: "success",
-      value: successValues,
-    };
+    return success(successValues);
   }
   const [head, ...tail] = values;
   const decodedHead = decoder(head);
   return decodedHead.type === "error"
     ? error(
-        `expected array item at index ${successValues.length} to decode correctly, received: ${JSON.stringify(head)}`,
+        decodedHead.value.map(decodeError => ({
+          path: [String(successValues.length), ...decodeError.path],
+          error: decodeError.error,
+          received: decodeError.received,
+        })),
       )
     : decodeArrayRecursive(decoder, tail, [...successValues, decodedHead.value]);
 };
@@ -88,11 +108,13 @@ const decodeArrayRecursive = <T>(decoder: Decoder<T>, values: any[], successValu
 /**
  * Decode an array based on the decoder of its elements.
  */
-export const array = <T>(decoder: Decoder<T>): Decoder<T[]> => {
-  return values => {
-    if (!Array.isArray(values)) {
-      return error(`expected array, received: ${JSON.stringify(values)}`);
-    }
-    return decodeArrayRecursive(decoder, values, []);
-  };
-};
+export const array = <T>(decoder: Decoder<T>): Decoder<T[]> => val =>
+  Array.isArray(val)
+    ? decodeArrayRecursive(decoder, val, [])
+    : error([
+        {
+          path: [],
+          error: "expected array",
+          received: val,
+        },
+      ]);

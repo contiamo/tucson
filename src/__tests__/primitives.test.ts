@@ -6,7 +6,16 @@ describe("string", () => {
   });
 
   test("unsuccessful string", () => {
-    expect(tucson.string(0)).toEqual({ type: "error", value: "expected a string, received: 0" });
+    expect(tucson.string(0)).toEqual({
+      type: "error",
+      value: [
+        {
+          path: [],
+          error: "expected string",
+          received: 0,
+        },
+      ],
+    });
   });
 });
 
@@ -16,7 +25,16 @@ describe("number", () => {
   });
 
   test("unsuccessful number", () => {
-    expect(tucson.number("0")).toEqual({ type: "error", value: `expected a number, received: "0"` });
+    expect(tucson.number("0")).toEqual({
+      type: "error",
+      value: [
+        {
+          path: [],
+          error: "expected number",
+          received: "0",
+        },
+      ],
+    });
   });
 });
 
@@ -26,7 +44,16 @@ describe("boolean", () => {
   });
 
   test("unsuccessful boolean", () => {
-    expect(tucson.boolean(70)).toEqual({ type: "error", value: `expected a boolean, received: 70` });
+    expect(tucson.boolean(70)).toEqual({
+      type: "error",
+      value: [
+        {
+          path: [],
+          error: "expected boolean",
+          received: 70,
+        },
+      ],
+    });
   });
 });
 
@@ -36,7 +63,15 @@ describe("null", () => {
   });
 
   test("unsuccessful null", () => {
-    expect(tucson.null("Sales")).toEqual(tucson.error(`expected null, received: "Sales"`));
+    expect(tucson.null("Sales")).toEqual(
+      tucson.error([
+        {
+          path: [],
+          error: "expected null",
+          received: "Sales",
+        },
+      ]),
+    );
   });
 });
 
@@ -46,7 +81,15 @@ describe("undefined", () => {
   });
 
   test("unsuccessful undefined", () => {
-    expect(tucson.undefined("Sales")).toEqual(tucson.error(`expected undefined, received: "Sales"`));
+    expect(tucson.undefined("Sales")).toEqual(
+      tucson.error([
+        {
+          path: [],
+          error: "expected undefined",
+          received: "Sales",
+        },
+      ]),
+    );
   });
 });
 
@@ -56,6 +99,15 @@ describe("literal", () => {
   });
 
   test("unsuccessful literal", () => {
-    expect(tucson.literal("Sales")("Foo")).toEqual(tucson.error(`expected literal "Sales", received: "Foo"`));
+    expect(tucson.literal("Sales")("Foo")).toEqual({
+      type: "error",
+      value: [
+        {
+          path: [],
+          error: 'expected literal "Sales"',
+          received: "Foo",
+        },
+      ],
+    });
   });
 });
