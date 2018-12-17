@@ -4,7 +4,7 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "target": "es5",
-    "module": "esnext",
+    "module": "CommonJS",
     "lib": ["es2015", "dom", "es2016.array.include", "es2017.object"],
     "jsx": "react",
     "declaration": true,
