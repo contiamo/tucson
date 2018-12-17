@@ -9,15 +9,10 @@ Simply install as `npm install tucson` and start validating like so:
 ```ts
 import * as tucson from "tucson-decode";
 
-interface Person {
-  name: string;
-  age: number;
-}
-
 tucson.object({
   name: tucson.string,
   age: tucson.number,
-})({ name: "Paul", age: "thirty-five" }); // logs { type: "error", value: "expected field 'age' to decode correctly, received: \"thirty-five\"" }
+})({ name: "Paul", age: "thirty-five" }); // logs { type: "error", value: { path: [ "age" ], error: "expected number", received: "thirty-five" } }
 ```
 
 Anything you create/combine with `tucson` will become a function that you can call on your data, returning a result object indicating success or a specific error you can reconcile with your server.
@@ -48,14 +43,14 @@ A decoder for a statically defined object structure can be simply built up from 
 
 ```ts
 interface Person {
-  name: string
-  age: number
+  name: string;
+  age: number;
 }
 
 const personDecoder: tucson.Decoder<Person> = tucson.object({
   name: tucson.string,
-  age: tucson.number
-})
+  age: tucson.number,
+});
 ```
 
 This is completely type-safe, courtesy of the TypeScript compiler.
@@ -67,7 +62,7 @@ Dictionaries are the dynamic cousins of objects so they can have any number of k
 You can define a dictionary decoder by simply passing it the decoder of the value:
 
 ```ts
-tucson.dictionary(tucson.string)({ one: "two", three: "four" }) // success
+tucson.dictionary(tucson.string)({ one: "two", three: "four" }); // success
 ```
 
 #### array
@@ -141,11 +136,11 @@ A typical error message looks like this:
 
 `tucson` is inspired by and an alternative to the following projects:
 
-* [elm/json](https://package.elm-lang.org/packages/elm/json/latest/Json-Decode)
-* [json-type-validation](https://github.com/mojotech/json-type-validation)
-* [yup](https://github.com/jquense/yup)
-* [joi](https://github.com/hapijs/joi)
-* [ajv](https://github.com/epoberezkin/ajv)
+- [elm/json](https://package.elm-lang.org/packages/elm/json/latest/Json-Decode)
+- [json-type-validation](https://github.com/mojotech/json-type-validation)
+- [yup](https://github.com/jquense/yup)
+- [joi](https://github.com/hapijs/joi)
+- [ajv](https://github.com/epoberezkin/ajv)
 
 ## Contributing
 
