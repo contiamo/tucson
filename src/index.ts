@@ -1,4 +1,4 @@
-export { Decoder, Result, success, error } from "./types";
+export { Decoder, Result, DecodeError, success, error } from "./types";
 export {
   succeed,
   fail,
